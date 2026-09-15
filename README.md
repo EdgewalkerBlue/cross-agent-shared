@@ -8,7 +8,7 @@
 
 ### 这是什么
 
-跨 Agent 共用共享的私有分发仓：把 Pi 体系下可跨 harness 复用的资产（SubAgent 定义、派发 CLI、项目初始化/全局同步工具、共享指令模板、WorkBuddy skill）集中为一个可一键部署的包。所有 Agent 消费**同一份实现**，禁止任何 harness 另造平行体系。
+跨 Agent 共用共享的开源分发仓：把 Pi 体系下可跨 harness 复用的资产（SubAgent 定义、派发 CLI、项目初始化/全局同步工具、共享指令模板、WorkBuddy skill）集中为一个可一键部署的包。所有 Agent 消费**同一份实现**，禁止任何 harness 另造平行体系。
 
 ### 分层架构
 
@@ -40,7 +40,7 @@ deploy.mjs                 # 一键部署
 ### 一键部署
 
 ```bash
-git clone <本仓库> && cd cross-agent-shared
+git clone https://github.com/EdgewalkerBlue/cross-agent-shared.git && cd cross-agent-shared
 node deploy.mjs            # 部署到 ~/.pi/agent 与 ~/.workbuddy/skills，随后自动 sync-global
 node deploy.mjs --dry-run  # 仅查看将执行的动作
 ```
@@ -55,13 +55,17 @@ node deploy.mjs --dry-run  # 仅查看将执行的动作
 2. **自有指令文件，需文件名映射渲染**：Claude Code（CLAUDE.md）、Cline、Roo Code、Kilo Code；
 3. **平台 / 框架型，需调研其全局指令注入点**：DeepSeek Harness、OpenHands、SWE-agent、Antigravity CLI、Grok Build。
 
+### 许可证
+
+[MIT](LICENSE) © 2026 EdgewalkerBlue。代码、模板与 prompt 定义均按同一许可证提供；「禁止平行实现」是面向接入方的工作流约定（见 `templates/global-agents-shared.md`），不构成许可证义务。
+
 ---
 
 ## English
 
 ### What is this
 
-A private distribution repo for cross-agent shared assets: SubAgent definitions, the dispatch CLI, project-init / global-sync tooling, the shared instruction template, and the WorkBuddy skill — packaged for one-shot deployment. All agents consume **the single implementation**; parallel per-harness re-implementations are forbidden.
+An open-source distribution repo for cross-agent shared assets: SubAgent definitions, the dispatch CLI, project-init / global-sync tooling, the shared instruction template, and the WorkBuddy skill — packaged for one-shot deployment. All agents consume **the single implementation**; parallel per-harness re-implementations are forbidden.
 
 ### Layered architecture
 
@@ -93,7 +97,7 @@ deploy.mjs                 # one-shot deployer
 ### One-shot deploy
 
 ```bash
-git clone <this repo> && cd cross-agent-shared
+git clone https://github.com/EdgewalkerBlue/cross-agent-shared.git && cd cross-agent-shared
 node deploy.mjs            # install into ~/.pi/agent and ~/.workbuddy/skills, then auto sync-global
 node deploy.mjs --dry-run  # list actions only
 ```
@@ -107,3 +111,7 @@ Extend the shared layer to more harnesses / agents (tracked in `.pi/task_set.jso
 1. **Native AGENTS.md readers — just add render targets**: Codex, OpenCode, Qwen Code, Goose, Aider;
 2. **Own instruction files — filename-mapped rendering**: Claude Code (CLAUDE.md), Cline, Roo Code, Kilo Code;
 3. **Platform / framework types — investigate their instruction injection points**: DeepSeek Harness, OpenHands, SWE-agent, Antigravity CLI, Grok Build.
+
+### License
+
+[MIT](LICENSE) © 2026 EdgewalkerBlue. Code, templates and prompt definitions are all provided under the same license. The "no parallel implementations" rule is a workflow convention for adopters (see `templates/global-agents-shared.md`), not a license obligation.
