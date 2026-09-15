@@ -1,0 +1,37 @@
+{
+  "enabled": true,
+  "timezone": "Asia/Shanghai",
+  "fallbackOnError": true,
+  "notes": "子 Agent 模型链（优先级从高到低）。aliases 简写 → 完整 provider/model。模型 id 必须存在于 ~/.pi/agent/models-store.json（Pi 实际使用的模型表；models.json 里的 id 不一定生效）。解析实现：subagent/models-core.mjs（Pi 扩展与 subagent-cli 共用）。改完即生效，无需 /reload。",
+  "aliases": {
+    "glm-5.3": "zai-coding-cn/glm-5.3",
+    "glm-5.3-flash": "zai-coding-cn/glm-5.3-flash",
+    "deepseek-flash": "deepseek/deepseek-flash",
+    "deepseek-v4.1-flash-expires-on-0910": "deepseek/deepseek-flash"
+  },
+  "default": [
+    "glm-5.3-flash",
+    "deepseek-flash"
+  ],
+  "agents": {
+    "thinker": [
+      "glm-5.3",
+      "glm-5.3-flash",
+      "deepseek-flash"
+    ],
+    "coder": [
+      "glm-5.3-flash",
+      "glm-5.3",
+      "deepseek-flash"
+    ],
+    "reasoner": [
+      "glm-5.3",
+      "glm-5.3-flash",
+      "deepseek-flash"
+    ],
+    "navigator": [
+      "glm-5.3-flash",
+      "deepseek-flash"
+    ]
+  }
+}

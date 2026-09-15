@@ -1,0 +1,26 @@
+{
+  "_comment": "统一 Agent 回报结构模板（Pi / ZCode / WorkBuddy / SubAgent 通用）。任务结束时填充并回写项目 .pi/task_set.json。",
+  "agent_result_schema": {
+    "changed_components": [],
+    "reused_components": [],
+    "refactored_components": [],
+    "new_abstractions": [],
+    "intentional_duplications": [],
+    "verification": {
+      "tests": [],
+      "typecheck": null,
+      "lint": null,
+      "build": null,
+      "other_checks": []
+    },
+    "risks": [],
+    "technical_debt": [],
+    "final_status": "pending"
+  },
+  "final_status_enum": [
+    "pending",
+    "completed",
+    "blocked",
+    "verification_gap"
+  ]
+}

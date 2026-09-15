@@ -1,0 +1,6 @@
+#!/bin/sh
+# Pi 项目门禁入口（sh 版，PATH 无关）
+NODE_BIN="$HOME/AppData/Local/pi-node/current/node.exe"
+[ -x "$NODE_BIN" ] || NODE_BIN="$HOME/AppData/Local/pi-node/current/node"
+[ -x "$NODE_BIN" ] || NODE_BIN="$(command -v node)"
+exec "$NODE_BIN" "$HOME/.pi/agent/bin/project-init.mjs" "$@"

@@ -1,0 +1,23 @@
+{
+  "任务集": {
+    "名称": "cross-agent-shared",
+    "创建时间": "2026-09-15 13:09",
+    "说明": "项目任务集（session-panel 自动加载）。约定：删除已完成项、只保留未完成项、按 P0>P1>P2>P3>P4 排序；每项回写 maintainability_check 字段。未来规划（P4）：把共用层扩展到下列 harness/agent，接入通道分三类——①原生 AGENTS.md 读取（gate-policy 增渲染目标即可）②自有指令文件（文件名映射渲染）③平台/框架型（调研指令注入点）。",
+    "任务列表": [
+      { "id": "ROAD-01", "标题": "【P4】共用层接入：Codex（①原生 AGENTS.md，gate-policy 增渲染目标）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-02", "标题": "【P4】共用层接入：OpenCode（①原生 AGENTS.md，gate-policy 增渲染目标）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-03", "标题": "【P4】共用层接入：Qwen Code（①原生 AGENTS.md，gate-policy 增渲染目标）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-04", "标题": "【P4】共用层接入：Goose（①原生 AGENTS.md，gate-policy 增渲染目标）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-05", "标题": "【P4】共用层接入：Aider（①原生 AGENTS.md/conventions，gate-policy 增渲染目标）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-06", "标题": "【P4】共用层接入：Claude Code（②自有指令文件 CLAUDE.md，sync 渲染时做文件名映射）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-07", "标题": "【P4】共用层接入：Cline（②自有规则文件，映射渲染）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-08", "标题": "【P4】共用层接入：Roo Code（②自有规则文件，映射渲染）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-09", "标题": "【P4】共用层接入：Kilo Code（②自有规则文件，映射渲染）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-10", "标题": "【P4】共用层接入：DeepSeek Harness（③平台型，调研全局指令/配置注入点）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-11", "标题": "【P4】共用层接入：OpenHands（③平台型，调研全局指令/配置注入点）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-12", "标题": "【P4】共用层接入：SWE-agent（③平台型，调研全局指令/配置注入点）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-13", "标题": "【P4】共用层接入：Antigravity CLI（③新型 CLI，调研指令注入点）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-14", "标题": "【P4】共用层接入：Grok Build（③新型构建 Agent，调研指令注入点）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" }
+    ]
+  }
+}

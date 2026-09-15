@@ -1,0 +1,12 @@
+# Pi / Agent 本地契约与私有数据 —— 不上传仓库
+# 由 ~/.pi/agent/bin/project-init.mjs 安装为 git core.excludesFile；
+# 各仓库另有 <git-dir>/info/exclude 同名区块（本地生效、不入库）。
+#
+# 例外：.pi/task_set.json 随项目分发（与项目绑定），必须上传。
+# 注意：不能写成 `.pi/`，否则父目录被排除后无法再包含子文件。
+
+.pi/*
+!.pi/task_set.json
+.zcode/
+AGENTS.md
+CODEBUDDY.md

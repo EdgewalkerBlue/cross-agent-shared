@@ -1,0 +1,55 @@
+{
+  "_comment": "AI Code Maintainability Gate - Stage 1 机器可读检查字段模板。写入 .pi/task_set.json 对应任务项；由 ~/.pi/agent/bin/project-init.mjs 生成，勿手改结构。",
+  "task_set_version": "1.0",
+  "task_set_id": "AI-CODE-MAINTAINABILITY-GATE-STAGE1",
+  "maintainability_check_schema": {
+    "existing_code_searched": false,
+    "reuse_considered": false,
+    "reuse_decision": null,
+    "duplicate_logic_introduced": null,
+    "intentional_duplication": false,
+    "intentional_duplication_reason": null,
+    "error_suppression_introduced": false,
+    "dependency_check_completed": false,
+    "final_diff_reviewed": false,
+    "tests_passed": false,
+    "typecheck_passed": null,
+    "lint_passed": null,
+    "build_passed": null,
+    "verification_gaps": [],
+    "technical_debt": [],
+    "unresolved_risks": []
+  },
+  "reuse_decision_enum": [
+    "reuse_existing",
+    "extend_existing",
+    "refactor_existing",
+    "create_new"
+  ],
+  "forbidden_patterns": [
+    "swallow_exceptions",
+    "empty_catch_blocks",
+    "silent_failure",
+    "disabled_tests",
+    "bypassed_type_checks",
+    "weakened_validation_for_green_build",
+    "suppressed_meaningful_errors"
+  ],
+  "completion_policy": {
+    "must_pass": [
+      "existing_code_searched",
+      "reuse_considered",
+      "final_diff_reviewed"
+    ],
+    "must_not_be_true": [
+      "error_suppression_introduced"
+    ],
+    "conditional_checks": [
+      "tests_passed",
+      "typecheck_passed",
+      "lint_passed",
+      "build_passed"
+    ],
+    "rule": "Conditional checks are required whenever the project provides or the changed code makes them applicable. Missing tooling is a verification gap, not an automatic pass."
+  }
+}

@@ -1,0 +1,8 @@
+#!/bin/sh
+# Pi 子 Agent 派发入口（sh 版，PATH 无关）
+# 用法： pi-subagent --list
+#        pi-subagent --agent coder --task "<任务>" --cwd "<项目>" --json
+NODE_BIN="$HOME/AppData/Local/pi-node/current/node.exe"
+[ -x "$NODE_BIN" ] || NODE_BIN="$HOME/AppData/Local/pi-node/current/node"
+[ -x "$NODE_BIN" ] || NODE_BIN="$(command -v node)"
+exec "$NODE_BIN" "$HOME/.pi/agent/bin/subagent-cli.mjs" "$@"

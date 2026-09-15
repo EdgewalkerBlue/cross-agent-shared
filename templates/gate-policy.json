@@ -1,0 +1,109 @@
+{
+  "_comment": "可维护性门禁策略（全自动生成/校验的行为配置）。改这里即可调整严格度，无需改代码。",
+  "project_roots": [
+    "D:/projects"
+  ],
+  "detect_markers": [
+    ".git",
+    "package.json",
+    "pyproject.toml",
+    "CMakeLists.txt",
+    "build.ps1",
+    "Cargo.toml",
+    "go.mod",
+    "*.sln",
+    "*.csproj"
+  ],
+  "ignore_dirs": [
+    ".git",
+    ".pi",
+    "node_modules",
+    "dist",
+    "build",
+    "build-x86",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "backup",
+    "third_party",
+    ".paseo"
+  ],
+  "guidance_char_limit": 8000,
+  "auto_layout_max_lines": 15,
+  "codebuddy_sync": true,
+  "git_hygiene": {
+    "enabled": true,
+    "forbidden_uploads": [
+      ".pi/",
+      ".zcode/",
+      "AGENTS.md",
+      "CODEBUDDY.md"
+    ],
+    "upload_exceptions": [
+      ".pi/task_set.json"
+    ],
+    "note": "例外：.pi/task_set.json 需随项目分发（与项目绑定），故写入 exclude 时用 .pi/* + !.pi/task_set.json 形式。",
+    "exclude_patterns": [
+      ".pi/*",
+      "!.pi/task_set.json",
+      ".zcode/",
+      "AGENTS.md",
+      "CODEBUDDY.md"
+    ],
+    "global_excludes_template": "templates/git-exclude-global.txt"
+  },
+  "codebuddy_files": [
+    "CODEBUDDY.md",
+    ".codebuddy/CODEBUDDY.md"
+  ],
+  "global_targets": {
+    "pi": {
+      "path": "~/.pi/agent/AGENTS.md",
+      "anchor": "pi-global"
+    },
+    "zcode": {
+      "path": "~/.zcode/AGENTS.md",
+      "anchor": "zcode-global",
+      "create_if_missing": true
+    },
+    "workbuddy": {
+      "path": null,
+      "note": "WorkBuddy 全局走人格文件（~/.workbuddy/SOUL.md 等），不承载代码门禁；项目级由 CODEBUDDY.md / AGENTS.md 承接。"
+    }
+  },
+  "verify_overrides": {
+    "D:/projects/ChatArchive": [
+      { "kind": "test", "cmd": "python tools/run_acceptance.py" },
+      { "kind": "test", "cmd": "python tools/selfcheck_p1_*.py（逐项自检脚本）" },
+      { "kind": "lint", "cmd": "python -m compileall -q src tools" }
+    ],
+    "D:/projects/GateKeeper": [
+      { "kind": "build", "cmd": "powershell -ExecutionPolicy Bypass -File tools/fullbuild.ps1" },
+      { "kind": "build(UI3)", "cmd": "powershell -ExecutionPolicy Bypass -File tools/fullbuild.ps1 -DeployUi3" },
+      { "kind": "test", "cmd": "src/selftest.cpp 自检（随 build 产出）" }
+    ],
+    "D:/projects/TooBaCO_Warehouse_Print_Workbench": [
+      { "kind": "build", "cmd": "dotnet build app/TooBaCO.Workbench/TooBaCO.Workbench.csproj" },
+      { "kind": "package", "cmd": "deploy.bat（打包/部署）" }
+    ]
+  },
+  "gates": {
+    "missing_agents_md": "strict",
+    "missing_task_set": "strict",
+    "broken_auto_block": "strict",
+    "unfilled_todo": "warn",
+    "over_length": "warn",
+    "missing_schemas": "warn"
+  },
+  "mode_overrides": {
+    "pre-commit": {
+      "unfilled_todo": "off",
+      "over_length": "off",
+      "missing_schemas": "off"
+    },
+    "implementation": {
+      "unfilled_todo": "strict"
+    }
+  },
+  "bootstrapped_projects": []
+}

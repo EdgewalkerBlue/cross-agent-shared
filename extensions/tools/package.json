@@ -1,0 +1,7 @@
+{
+  "name": "pi-ext-tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LLM 工具类扩展套件：地图气象工具、子 Agent 派发",
+  "pi": { "extensions": ["./weather-map.ts", "./subagent/index.ts"] }
+}

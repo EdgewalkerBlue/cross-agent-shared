@@ -1,0 +1,12 @@
+{
+  "costLimitPerTask": 0.5,
+  "timeoutMinutes": 15,
+  "denyTools": [],
+  "enableDangerousIntercept": true,
+  "dangerousCommandPatterns": [
+    "rm -rf", "rm -fr", "rmdir /s", "rd /s", "del /f", "del /s",
+    "format ", "mkfs", "shutdown", "taskkill /f",
+    "git push --force", "git push -f ", "git reset --hard",
+    "Remove-Item -Recurse -Force"
+  ]
+}
