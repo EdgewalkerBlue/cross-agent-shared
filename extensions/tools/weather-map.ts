@@ -8,16 +8,20 @@
  *   route       驾车路径规划（高德）：起终点（坐标或先经 geocode）→ 距离/时长/路线概要
  *
  * 高德 key：存 Windows 凭据管理器（pi-amap），申请：https://console.amap.com/dev/key/app
- *   绑定方式：powershell -File C:/Users/PC/.pi/agent/bin/pi-cred.ps1 set pi-amap → 重启 pi
+ *   绑定方式：powershell -File ~/.pi/agent/bin/pi-cred.ps1 set pi-amap → 重启 pi
  * 无 key 时 weather 可用（Open-Meteo 免 key），高德三工具返回申请指引。
  */
 
 import { exec, execSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import * as fs from "node:fs";
+import * as os from "node:os";
 import * as path from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
+
+// PowerShell -File 参数统一用正斜杠，避免反斜杠被当转义符
+const PI_CRED_PS1 = path.join(os.homedir(), ".pi", "agent", "bin", "pi-cred.ps1").replace(/\\/g, "/");
 
 // ---------- key 管理 ----------
 let amapKeyCache: string | null | undefined;
@@ -25,7 +29,7 @@ function getAmapKey(): string | null {
 	if (amapKeyCache !== undefined) return amapKeyCache;
 	try {
 		const out = execSync(
-			'powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "C:/Users/PC/.pi/agent/bin/pi-cred.ps1" get pi-amap',
+			`powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "${PI_CRED_PS1}" get pi-amap`,
 			{ encoding: "utf8", timeout: 15_000 },
 		).trim();
 		amapKeyCache = /^[0-9a-f]{32}$/i.test(out) ? out : null;
@@ -41,7 +45,7 @@ function getAmapSecret(): string | null {
 	if (amapSecretCache !== undefined) return amapSecretCache;
 	try {
 		const out = execSync(
-			'powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "C:/Users/PC/.pi/agent/bin/pi-cred.ps1" get pi-amap-secret',
+			`powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "${PI_CRED_PS1}" get pi-amap-secret`,
 			{ encoding: "utf8", timeout: 15_000 },
 		).trim();
 		amapSecretCache = /^[0-9a-f]{32}$/i.test(out) ? out : null;
@@ -52,10 +56,10 @@ function getAmapSecret(): string | null {
 }
 
 const AMAP_KEY_HINT =
-	"高德 API key 未配置。请到 https://console.amap.com/dev/key/app 申请「Web服务」类型 key（免费），然后运行：\npowershell -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/PC/.pi/agent/bin/pi-cred.ps1\" set pi-amap\n再完全重启 pi 生效。";
+	`高德 API key 未配置。请到 https://console.amap.com/dev/key/app 申请「Web服务」类型 key（免费），然后运行：\npowershell -NoProfile -ExecutionPolicy Bypass -File "${PI_CRED_PS1}" set pi-amap\n再完全重启 pi 生效。`;
 
 const AMAP_SIG_HINT =
-	"高德 API 报「数字签名无效」：请到 https://console.amap.com/dev/key/app 展开该 key，找到「数字签名」处的 PrivateKey（单独一段 32 位字符），先复制到剪贴板，再运行：\nGet-Clipboard | powershell -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/PC/.pi/agent/bin/pi-cred.ps1\" set pi-amap-secret\n再完全重启 pi 生效。注意：只复制 PrivateKey 单独一列，勿连带 Key 或其他值。";
+	`高德 API 报「数字签名无效」：请到 https://console.amap.com/dev/key/app 展开该 key，找到「数字签名」处的 PrivateKey（单独一段 32 位字符），先复制到剪贴板，再运行：\nGet-Clipboard | powershell -NoProfile -ExecutionPolicy Bypass -File "${PI_CRED_PS1}" set pi-amap-secret\n再完全重启 pi 生效。注意：只复制 PrivateKey 单独一列，勿连带 Key 或其他值。`;
 
 // ---------- HTTP ----------
 async function fetchJson(url: string, headers?: Record<string, string>): Promise<any> {

@@ -21,6 +21,7 @@
  */
 import { execSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync, copyFileSync, readdirSync } from "node:fs";
+import { homedir } from "node:os";
 import { dirname, join, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -29,6 +30,8 @@ const AGENT_DIR = dirname(HERE); // ~/.pi/agent
 const MODELS_JSON = join(AGENT_DIR, "models.json");
 const AUTH_JSON = join(AGENT_DIR, "auth.json");
 const PROVIDER_ID = "newapi";
+// PowerShell -File 参数统一用正斜杠，避免反斜杠被当转义符
+const PI_CRED_PS1 = join(AGENT_DIR, "bin", "pi-cred.ps1").replace(/\\/g, "/");
 
 const args = new Set(process.argv.slice(2));
 const DRY = args.has("--dry") || args.has("--dry-run");
@@ -116,7 +119,7 @@ const isBroken = (id) => BROKEN.some((re) => re.test(id));
 
 function findCatalogDir() {
   const roots = [
-    "C:/Users/PC/AppData/Local/pi-node/current/node_modules/@earendil-works/pi-coding-agent/node_modules/@earendil-works/pi-ai/dist/providers/data",
+    join(homedir(), "AppData/Local/pi-node/current/node_modules/@earendil-works/pi-coding-agent/node_modules/@earendil-works/pi-ai/dist/providers/data"),
     join(HERE, "..", "node_modules/@earendil-works/pi-ai/dist/providers/data"),
   ];
   return roots.find((p) => existsSync(p)) ?? null;
@@ -306,7 +309,7 @@ if (PROBE) {
 const provider = {
   baseUrl: `${url}/v1`,
   api: "openai-completions",
-  apiKey: `!powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "C:/Users/PC/.pi/agent/bin/pi-cred.ps1" get pi-${PROVIDER_ID}`,
+  apiKey: `!powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "${PI_CRED_PS1}" get pi-${PROVIDER_ID}`,
   compat: {
     supportsStore: false,
     // This station answers HTTP 400 "Illegal API invocation from an unapproved
