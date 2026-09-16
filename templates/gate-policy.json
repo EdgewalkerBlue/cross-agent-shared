@@ -31,13 +31,15 @@
   "guidance_char_limit": 8000,
   "auto_layout_max_lines": 15,
   "codebuddy_sync": true,
+  "claude_sync": true,
   "git_hygiene": {
     "enabled": true,
     "forbidden_uploads": [
       ".pi/",
       ".zcode/",
       "AGENTS.md",
-      "CODEBUDDY.md"
+      "CODEBUDDY.md",
+      "CLAUDE.md"
     ],
     "upload_exceptions": [
       ".pi/task_set.json"
@@ -48,7 +50,8 @@
       "!.pi/task_set.json",
       ".zcode/",
       "AGENTS.md",
-      "CODEBUDDY.md"
+      "CODEBUDDY.md",
+      "CLAUDE.md"
     ],
     "global_excludes_template": "templates/git-exclude-global.txt"
   },
@@ -124,6 +127,30 @@
       "anchor": "kilo-global",
       "create_if_missing": true,
       "header": "# Kilo Code 全局指令\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）；项目级契约见各项目根 AGENTS.md（AGENTS.md 即 Kilo 的首选指令机制）。\n\n"
+    },
+    "dsh": {
+      "path": "~/.dsh/AGENTS.md",
+      "anchor": "dsh-global",
+      "create_if_missing": true,
+      "header": "# DeepSeek Harness 全局指令\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）；项目级契约见各项目根 AGENTS.md（dsh 原生读取，agent-instructions 插件会话启动注入）。\n\n"
+    },
+    "openhands": {
+      "path": "~/.agents/skills/pi-shared.md",
+      "anchor": "openhands-global",
+      "create_if_missing": true,
+      "header": "# OpenHands 全局技能（pi-shared）\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）。OpenHands 对 ~/.agents/skills/ 下无触发器的纯 .md 全文常载；勿移入 ~/.openhands/skills（会覆盖公共 skills 缓存），Docker 场景需挂载本目录。\n\n"
+    },
+    "antigravity": {
+      "path": "~/.gemini/GEMINI.md",
+      "anchor": "antigravity-global",
+      "create_if_missing": true,
+      "header": "# Antigravity 全局指令\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）；项目级契约见各项目根 AGENTS.md（Antigravity 自动解析，Gemini CLI 亦读本文件）。\n\n"
+    },
+    "grok": {
+      "path": "~/.grok/rules/pi-shared.md",
+      "anchor": "grok-global-rules",
+      "create_if_missing": true,
+      "header": "# Grok Build 全局规则（pi-shared）\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）；项目级契约见各项目根 AGENTS.md。注意：勿把共享块放进 ~/.claude/rules 或 ~/.cursor/rules（Grok 兼容加载这些目录，会与 Claude 目标重复）。\n\n"
     }
   },
   "verify_overrides": {

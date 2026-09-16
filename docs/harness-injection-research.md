@@ -17,11 +17,13 @@
 | ② | Cline | `~/Documents/Cline/Rules/pi-shared.md`（目录型；**Documents 被重定向的机器需改实际路径**） | ✅ 已渲染 |
 | ② | Roo Code | `~/.roo/rules/pi-shared.md`（目录型整文件，天然幂等） | ✅ 已渲染 |
 | ② | Kilo Code | `~/.config/kilo/AGENTS.md`（标记块单文件） | ✅ 已渲染 |
-| ③ | DeepSeek Harness | `~/.dsh/AGENTS.md` | A 级，待接线 |
-| ③ | OpenHands | `~/.agents/skills/pi-shared.md`（纯 .md 无触发器即全文常载） | A 级，待接线 |
-| ③ | Antigravity | `~/.gemini/GEMINI.md`（CLI 另读 `~/.gemini/AGENTS.md`） | A 级，待接线 |
-| ③ | Grok Build | `~/.grok/rules/pi-shared.md`（目录型） | A 级，待接线 |
+| ③ | DeepSeek Harness | `~/.dsh/AGENTS.md` | ✅ 已渲染 |
+| ③ | OpenHands | `~/.agents/skills/pi-shared.md`（纯 .md 无触发器即全文常载） | ✅ 已渲染 |
+| ③ | Antigravity | `~/.gemini/GEMINI.md`（CLI 另读 `~/.gemini/AGENTS.md`） | ✅ 已渲染 |
+| ③ | Grok Build | `~/.grok/rules/pi-shared.md`（目录型） | ✅ 已渲染 |
 | ③ | SWE-agent | 无文件级注入点（仅 YAML 模板内嵌 + `--config`） | C 级，暂缓 |
+
+项目级补齐：Claude Code 不读项目 AGENTS.md，`project-init.mjs` bootstrap（`claude_sync` 开关）自动生成一行 `@AGENTS.md` 导入指针的 CLAUDE.md（已有 CLAUDE.md 一律不动），CLAUDE.md 已纳入 git 禁传清单与全局/仓库 excludes。
 
 ## 一、①类：原生读取 AGENTS.md（gate-policy 增渲染目标即可）
 
@@ -89,7 +91,7 @@
 
 1. **`~/.agents/` 是新兴跨工具收敛位**（Goose 全局 AGENTS.md、Cline 全局 AGENTS.md、OpenHands 全局 skills），但多工具同时消费同一文件会造成上下文重复——本仓坚持 per-tool 独立落点，收敛位仅作记录。
 2. **Claude 系目录会被竞品兼容加载**（Grok 读 `~/.claude/rules/`），Claude 目标因此选 CLAUDE.md 单文件标记块。
-3. **仅 Claude Code 与 Aider 不读项目 AGENTS.md**：前者用 `@AGENTS.md` 导入指针即可低成本补齐（已登记任务）；后者本来就走显式 `read:` 机制。
+3. **仅 Claude Code 与 Aider 不读项目 AGENTS.md**：前者由 project-init 自动生成 `@AGENTS.md` 导入指针 CLAUDE.md 补齐（已实现）；后者本来就走显式 `read:` 机制。
 4. 接线新目标的标准动作：`gate-policy.json` 的 `global_targets` 增一项（path + create_if_missing + header）→ `project-init.mjs --sync-global` → 复跑一次确认「无变化」（幂等）。
 
 ## 来源（节选）

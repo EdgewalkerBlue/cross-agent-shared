@@ -10,3 +10,4 @@
 .zcode/
 AGENTS.md
 CODEBUDDY.md
+CLAUDE.md

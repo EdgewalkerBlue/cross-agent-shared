@@ -29,6 +29,9 @@ const SCHEMA_FILES = ["maintainability_check.json", "agent_result.json"];
 
 const SYNC_MARK = "<!-- pi:sync:from=AGENTS.md  由 project-init.mjs 自动同步，勿手改 -->";
 
+// Claude Code 不读项目 AGENTS.md（官方机制只有 CLAUDE.md），用 @导入指针指回，内容不重复、不漂移。
+const CLAUDE_POINTER = "<!-- 由 project-init.mjs 自动生成：Claude Code 不读项目 AGENTS.md，下面一行 @导入 指回契约源；勿手改，删除即解除。 -->\n@AGENTS.md\n";
+
 // ---------------------------------------------------------------- 基础工具
 
 function expandHome(p) {
@@ -369,6 +372,14 @@ function syncCodebuddy(dir, policy) {
   return { synced, backup };
 }
 
+/** 生成 CLAUDE.md 指针（claude_sync 开关；已有 CLAUDE.md——含用户自写——一律不动） */
+function ensureClaudePointer(dir, policy) {
+  if (!policy.claude_sync) return false;
+  const file = path.join(dir, "CLAUDE.md");
+  if (fs.existsSync(file)) return false;
+  return writeFileIfChanged(file, CLAUDE_POINTER);
+}
+
 // ---------------------------------------------------------------- 上传卫生
 // 约定：.pi/ 与 .zcode/ 目录、AGENTS.md / CODEBUDDY.md 一律不上传（本地契约 + 私有数据）。
 // 双保险：全局 core.excludesFile（跨仓库） + 各仓库 <git-dir>/info/exclude（本地、不入库）
@@ -471,7 +482,7 @@ function guardStaged(dir, policy) {
 // ---------------------------------------------------------------- 主流程
 
 function bootstrap(dir, policy, opts) {
-  const result = { dir, created: [], refreshed: [], taskSet: false, schemas: [], codebuddy: { synced: [], backup: [] }, gitExclude: false, gitignore: false };
+  const result = { dir, created: [], refreshed: [], taskSet: false, schemas: [], codebuddy: { synced: [], backup: [] }, claudePointer: false, gitExclude: false, gitignore: false };
   const agents = path.join(dir, "AGENTS.md");
   const facts = scanFacts(dir, policy);
   const generated = renderAutoBlocks(facts, path.basename(dir));
@@ -488,6 +499,7 @@ function bootstrap(dir, policy, opts) {
   result.taskSet = ensureTaskSet(dir);
   result.schemas = ensureSchemas(dir);
   result.codebuddy = syncCodebuddy(dir, policy);
+  result.claudePointer = ensureClaudePointer(dir, policy);
   result.gitExclude = ensureGitExclude(dir, policy);
   result.gitignore = ensureProjectGitignore(dir, policy);
   return result;
@@ -692,6 +704,7 @@ function main() {
       if (e.gitignore) bits.push("修正 .gitignore（.pi/ → .pi/* + !.pi/task_set.json）");
       if (e.codebuddy.synced.length) bits.push(`同步 ${e.codebuddy.synced.join(", ")}`);
       if (e.codebuddy.backup.length) bits.push(`原文件已备份 ${e.codebuddy.backup.join(", ")}`);
+      if (e.claudePointer) bits.push("生成 CLAUDE.md 指针（@AGENTS.md）");
       log(`✅ ${e.dir}${bits.length ? " → " + bits.join("；") : " → 无需变更"}`);
     }
     for (const c of report.checks) {

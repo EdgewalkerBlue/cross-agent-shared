@@ -45,15 +45,15 @@ node deploy.mjs            # 部署到 ~/.pi/agent 与 ~/.workbuddy/skills，随
 node deploy.mjs --dry-run  # 仅查看将执行的动作
 ```
 
-部署动作：覆盖前自动备份到 `~/.pi/agent/backup-deploy-<时间戳>/` → 复制资产 → `--sync-global` 渲染 Pi / ZCode 全局指令 → 自检（`subagent-cli --list` 含 4 个 agent、两个全局指令文件含「无人值守执行守则」、WorkBuddy skill 与仓库一致）。
+部署动作：覆盖前自动备份到 `~/.pi/agent/backup-deploy-<时间戳>/` → 复制资产 → `--sync-global` 渲染全部已接入 harness 的全局指令（Pi / ZCode / Codex / Claude Code 等 15 处，清单见 `templates/gate-policy.json` 的 `global_targets`） → 自检（`subagent-cli --list` 含 4 个 agent、两个全局指令文件含「无人值守执行守则」、WorkBuddy skill 与仓库一致）。
 
 ### 未来规划（Roadmap）
 
 共用层扩展进展（调研结论与决策记录见 `docs/harness-injection-research.md`，任务登记于 `.pi/task_set.json`）：
 
-1. **已完成**：全局渲染目标已覆盖 Codex、OpenCode、Qwen Code、Goose、Aider（①原生 AGENTS.md）与 Claude Code（CLAUDE.md）、Cline、Roo Code、Kilo Code（②自有规则文件），由 `templates/gate-policy.json` 的 `global_targets` 统一驱动，`node deploy.mjs` 后自动渲染；
-2. **待接线**（调研已确认 A 级，`~/.dsh/AGENTS.md`、`~/.agents/skills/`、`~/.gemini/GEMINI.md`、`~/.grok/rules/`）：DeepSeek Harness、OpenHands、Antigravity、Grok Build；
-3. **暂缓**：SWE-agent（C 级，无文件级注入点，仅 YAML 模板内嵌）；Aider 的 `~/.aider.conf.yml` read 接线待实际安装后补。
+1. **已完成**：全局渲染目标已覆盖 13 个外部 harness——①原生 AGENTS.md：Codex、OpenCode、Qwen Code、Goose、Aider、DeepSeek Harness、Antigravity；②自有指令文件：Claude Code（全局 CLAUDE.md）、Cline、Roo Code、Kilo Code、OpenHands（`~/.agents/skills/`）、Grok Build（`~/.grok/rules/`）——由 `templates/gate-policy.json` 的 `global_targets` 统一驱动，`node deploy.mjs` 后自动渲染；项目级由 project-init 自动生成 Claude Code 的 `@AGENTS.md` 指针 CLAUDE.md，CLAUDE.md 已纳入禁传清单；
+2. **待人工**：Aider 的 `~/.aider.conf.yml` read 接线（渲染文件已就位，待实际安装后补）；
+3. **暂缓**：SWE-agent（C 级，无文件级注入点，仅 YAML 模板内嵌）。
 
 ### 许可证
 
@@ -102,15 +102,15 @@ node deploy.mjs            # install into ~/.pi/agent and ~/.workbuddy/skills, t
 node deploy.mjs --dry-run  # list actions only
 ```
 
-Deploy flow: back up overwritten files to `~/.pi/agent/backup-deploy-<timestamp>/` → copy assets → `--sync-global` renders the Pi / ZCode global instructions → self-check (`subagent-cli --list` contains the 4 agents; both global instruction files contain the unattended-loop protocol; WorkBuddy skill matches the repo).
+Deploy flow: back up overwritten files to `~/.pi/agent/backup-deploy-<timestamp>/` → copy assets → `--sync-global` renders global instructions for all wired harnesses (Pi / ZCode / Codex / Claude Code etc., 15 targets — see `global_targets` in `templates/gate-policy.json`) → self-check (`subagent-cli --list` contains the 4 agents; both global instruction files contain the unattended-loop protocol; WorkBuddy skill matches the repo).
 
 ### Roadmap
 
 Shared-layer expansion status (research findings & decisions: `docs/harness-injection-research.md`; tasks tracked in `.pi/task_set.json`):
 
-1. **Done**: global render targets now cover Codex, OpenCode, Qwen Code, Goose, Aider (native AGENTS.md readers) plus Claude Code (CLAUDE.md), Cline, Roo Code, Kilo Code (own rule files) — all driven by `global_targets` in `templates/gate-policy.json` and rendered automatically by `node deploy.mjs`;
-2. **Next** (research-confirmed grade A: `~/.dsh/AGENTS.md`, `~/.agents/skills/`, `~/.gemini/GEMINI.md`, `~/.grok/rules/`): DeepSeek Harness, OpenHands, Antigravity, Grok Build;
-3. **Deferred**: SWE-agent (grade C, no file-level injection point — YAML template embedding only); Aider's `~/.aider.conf.yml` read wiring waits for an actual install.
+1. **Done**: global render targets now cover 13 external harnesses — native AGENTS.md readers (Codex, OpenCode, Qwen Code, Goose, Aider, DeepSeek Harness, Antigravity) and own-rule-file tools (Claude Code global CLAUDE.md, Cline, Roo Code, Kilo Code, OpenHands `~/.agents/skills/`, Grok Build `~/.grok/rules/`) — all driven by `global_targets` in `templates/gate-policy.json` and rendered automatically by `node deploy.mjs`. Project-level, project-init generates a one-line `@AGENTS.md` pointer CLAUDE.md for Claude Code, and CLAUDE.md is on the forbidden-upload list;
+2. **Manual**: Aider's `~/.aider.conf.yml` read wiring (render target file in place; waits for an actual install);
+3. **Deferred**: SWE-agent (grade C, no file-level injection point — YAML template embedding only).
 
 ### License
 
