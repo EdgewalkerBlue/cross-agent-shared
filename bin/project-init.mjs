@@ -554,8 +554,8 @@ function syncGlobal(policy) {
       if (writeFileIfChanged(file, next)) done.push(`${agent}: 已更新 ${file}`);
       else done.push(`${agent}: 无变化 ${file}`);
     } else if (cfg.create_if_missing) {
-      const header = `${agent === "zcode" ? "# ZCode 全局指令\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）。\n> 项目级契约见各项目根 AGENTS.md；ZCode SubAgent 需在设置中开启 AGENTS.md 注入。\n\n" : ""}`;
-      writeFileIfChanged(file, `${header}${shared}\n`);
+      // 创建时头部横幅由策略 per-target 配置（global_targets.<agent>.header），代码不认工具名。
+      writeFileIfChanged(file, `${cfg.header ?? ""}${shared}\n`);
       done.push(`${agent}: 已创建 ${file}`);
     } else {
       done.push(`${agent}: 跳过（未配置路径）`);

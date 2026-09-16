@@ -64,11 +64,66 @@
     "zcode": {
       "path": "~/.zcode/AGENTS.md",
       "anchor": "zcode-global",
-      "create_if_missing": true
+      "create_if_missing": true,
+      "header": "# ZCode 全局指令\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）。\n> 项目级契约见各项目根 AGENTS.md；ZCode SubAgent 需在设置中开启 AGENTS.md 注入。\n\n"
     },
     "workbuddy": {
       "path": null,
       "note": "WorkBuddy 全局走人格文件（~/.workbuddy/SOUL.md 等），不承载代码门禁；项目级由 CODEBUDDY.md / AGENTS.md 承接。"
+    },
+    "codex": {
+      "path": "~/.codex/AGENTS.md",
+      "anchor": "codex-global",
+      "create_if_missing": true,
+      "header": "# Codex 全局指令\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）；项目级契约见各项目根 AGENTS.md（Codex 原生读取）。\n\n"
+    },
+    "opencode": {
+      "path": "~/.config/opencode/AGENTS.md",
+      "anchor": "opencode-global",
+      "create_if_missing": true,
+      "header": "# OpenCode 全局指令\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）；项目级契约见各项目根 AGENTS.md（OpenCode 原生读取，全平台统一走 ~/.config/opencode）。\n\n"
+    },
+    "qwen": {
+      "path": "~/.qwen/AGENTS.md",
+      "anchor": "qwen-global",
+      "create_if_missing": true,
+      "header": "# Qwen Code 全局指令\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）；项目级契约见各项目根 AGENTS.md（Qwen Code 原生读取，~/.qwen 下 QWEN.md 与 AGENTS.md 均自动加载，此处用 AGENTS.md 留 QWEN.md 给个人记忆）。\n\n"
+    },
+    "goose": {
+      "path": "~/AppData/Roaming/Block/goose/config/AGENTS.md",
+      "anchor": "goose-global",
+      "create_if_missing": true,
+      "header": "# Goose 全局指令\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）；项目级契约见各项目根 AGENTS.md（Goose 原生读取）。\n\n"
+    },
+    "aider": {
+      "path": "~/.aider/CONVENTIONS.md",
+      "anchor": "aider-conventions",
+      "create_if_missing": true,
+      "header": "# Aider 共享约定（CONVENTIONS）\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）。Aider 不会自动加载本文件：须在 ~/.aider.conf.yml 写 `read: <本文件绝对路径>`（必须绝对路径，Aider 不读项目 AGENTS.md）。\n\n"
+    },
+    "claude": {
+      "path": "~/.claude/CLAUDE.md",
+      "anchor": "claude-global",
+      "create_if_missing": true,
+      "header": "# Claude Code 全局指令\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）。Claude Code 不读项目 AGENTS.md：项目级契约需项目自带 CLAUDE.md（可用一行 `@AGENTS.md` 导入指回）。\n\n"
+    },
+    "cline": {
+      "path": "~/Documents/Cline/Rules/pi-shared.md",
+      "anchor": "cline-global-rules",
+      "create_if_missing": true,
+      "header": "# Cline 全局规则（pi-shared）\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）；Cline 原生读取项目根 AGENTS.md。注意：Documents 被重定向的机器需把 path 改为真实 Documents 下的 Cline/Rules。\n\n"
+    },
+    "roo": {
+      "path": "~/.roo/rules/pi-shared.md",
+      "anchor": "roo-global-rules",
+      "create_if_missing": true,
+      "header": "# Roo Code 全局规则（pi-shared）\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）；Roo Code 原生读取项目根 AGENTS.md 与本目录（目录型全局规则，整文件即共享块）。\n\n"
+    },
+    "kilo": {
+      "path": "~/.config/kilo/AGENTS.md",
+      "anchor": "kilo-global",
+      "create_if_missing": true,
+      "header": "# Kilo Code 全局指令\n\n> 与 Pi 共享同一门禁源（~/.pi/agent/templates/global-agents-shared.md）；项目级契约见各项目根 AGENTS.md（AGENTS.md 即 Kilo 的首选指令机制）。\n\n"
     }
   },
   "verify_overrides": {

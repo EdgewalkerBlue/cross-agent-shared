@@ -2,22 +2,15 @@
   "任务集": {
     "名称": "cross-agent-shared",
     "创建时间": "2026-09-15 13:09",
-    "说明": "项目任务集（session-panel 自动加载）。约定：删除已完成项、只保留未完成项、按 P0>P1>P2>P3>P4 排序；每项回写 maintainability_check 字段。未来规划（P4）：把共用层扩展到下列 harness/agent，接入通道分三类——①原生 AGENTS.md 读取（gate-policy 增渲染目标即可）②自有指令文件（文件名映射渲染）③平台/框架型（调研指令注入点）。",
+    "说明": "项目任务集（session-panel 自动加载）。约定：删除已完成项、只保留未完成项、按 P0>P1>P2>P3>P4 排序；每项回写 maintainability_check 字段。原 14 项 P4 路线图（ROAD-01～14）已于 2026-09-16 完成：①②类 9 个工具的全局渲染目标已入 gate-policy 并渲染落地；③类 5 平台调研结论见 docs/harness-injection-research.md。下列为调研产出的后续任务。",
     "任务列表": [
-      { "id": "ROAD-01", "标题": "【P4】共用层接入：Codex（①原生 AGENTS.md，gate-policy 增渲染目标）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
-      { "id": "ROAD-02", "标题": "【P4】共用层接入：OpenCode（①原生 AGENTS.md，gate-policy 增渲染目标）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
-      { "id": "ROAD-03", "标题": "【P4】共用层接入：Qwen Code（①原生 AGENTS.md，gate-policy 增渲染目标）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
-      { "id": "ROAD-04", "标题": "【P4】共用层接入：Goose（①原生 AGENTS.md，gate-policy 增渲染目标）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
-      { "id": "ROAD-05", "标题": "【P4】共用层接入：Aider（①原生 AGENTS.md/conventions，gate-policy 增渲染目标）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
-      { "id": "ROAD-06", "标题": "【P4】共用层接入：Claude Code（②自有指令文件 CLAUDE.md，sync 渲染时做文件名映射）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
-      { "id": "ROAD-07", "标题": "【P4】共用层接入：Cline（②自有规则文件，映射渲染）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
-      { "id": "ROAD-08", "标题": "【P4】共用层接入：Roo Code（②自有规则文件，映射渲染）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
-      { "id": "ROAD-09", "标题": "【P4】共用层接入：Kilo Code（②自有规则文件，映射渲染）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
-      { "id": "ROAD-10", "标题": "【P4】共用层接入：DeepSeek Harness（③平台型，调研全局指令/配置注入点）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
-      { "id": "ROAD-11", "标题": "【P4】共用层接入：OpenHands（③平台型，调研全局指令/配置注入点）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
-      { "id": "ROAD-12", "标题": "【P4】共用层接入：SWE-agent（③平台型，调研全局指令/配置注入点）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
-      { "id": "ROAD-13", "标题": "【P4】共用层接入：Antigravity CLI（③新型 CLI，调研指令注入点）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
-      { "id": "ROAD-14", "标题": "【P4】共用层接入：Grok Build（③新型构建 Agent，调研指令注入点）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" }
+      { "id": "ROAD-15", "标题": "【P3】接线 DeepSeek Harness：global_targets 增 dsh → ~/.dsh/AGENTS.md（调研 A 级，agent-instructions 插件会话启动自动注入）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-16", "标题": "【P3】接线 OpenHands：渲染到 ~/.agents/skills/pi-shared.md（A 级；纯 .md 无触发器即全文常载；勿用 ~/.openhands/skills，Docker 需挂载）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-17", "标题": "【P3】接线 Antigravity：渲染到 ~/.gemini/GEMINI.md（A 级；CLI 亦自动读 ~/.gemini/AGENTS.md，二选一即可）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-18", "标题": "【P3】接线 Grok Build：渲染到 ~/.grok/rules/pi-shared.md（A 级；目录型整文件；注意其兼容加载 ~/.claude/rules，勿往该目录渲染）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-19", "标题": "【P3】Claude Code 项目级映射：project-init bootstrap 增 CLAUDE.md 一行 @AGENTS.md 导入指针（Claude 不读项目 AGENTS.md）；同步把 CLAUDE.md 纳入 git_hygiene 禁传清单", "路径": "D:\\projects\\cross-agent-shared", "状态": "待执行" },
+      { "id": "ROAD-20", "标题": "【P4·待人工】Aider 配置接线：安装 Aider 后在 ~/.aider.conf.yml 增 read: ~/.aider/CONVENTIONS.md 的绝对路径（渲染目标文件已就位；依赖工具安装+人工确认，Aider 不读项目 AGENTS.md）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待人工" },
+      { "id": "ROAD-21", "标题": "【P4·暂缓】SWE-agent：C 级无文件级注入点，仅能内嵌 YAML system_template + --config；暂不实施，跟踪上游是否新增指令文件机制", "路径": "D:\\projects\\cross-agent-shared", "状态": "暂缓" }
     ]
   }
 }

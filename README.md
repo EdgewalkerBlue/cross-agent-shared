@@ -49,11 +49,11 @@ node deploy.mjs --dry-run  # 仅查看将执行的动作
 
 ### 未来规划（Roadmap）
 
-把共用层扩展到更多 harness / agent（已登记于 `.pi/task_set.json`，P4 远期）：
+共用层扩展进展（调研结论与决策记录见 `docs/harness-injection-research.md`，任务登记于 `.pi/task_set.json`）：
 
-1. **原生读取 AGENTS.md，加渲染目标即可**：Codex、OpenCode、Qwen Code、Goose、Aider；
-2. **自有指令文件，需文件名映射渲染**：Claude Code（CLAUDE.md）、Cline、Roo Code、Kilo Code；
-3. **平台 / 框架型，需调研其全局指令注入点**：DeepSeek Harness、OpenHands、SWE-agent、Antigravity CLI、Grok Build。
+1. **已完成**：全局渲染目标已覆盖 Codex、OpenCode、Qwen Code、Goose、Aider（①原生 AGENTS.md）与 Claude Code（CLAUDE.md）、Cline、Roo Code、Kilo Code（②自有规则文件），由 `templates/gate-policy.json` 的 `global_targets` 统一驱动，`node deploy.mjs` 后自动渲染；
+2. **待接线**（调研已确认 A 级，`~/.dsh/AGENTS.md`、`~/.agents/skills/`、`~/.gemini/GEMINI.md`、`~/.grok/rules/`）：DeepSeek Harness、OpenHands、Antigravity、Grok Build；
+3. **暂缓**：SWE-agent（C 级，无文件级注入点，仅 YAML 模板内嵌）；Aider 的 `~/.aider.conf.yml` read 接线待实际安装后补。
 
 ### 许可证
 
@@ -106,11 +106,11 @@ Deploy flow: back up overwritten files to `~/.pi/agent/backup-deploy-<timestamp>
 
 ### Roadmap
 
-Extend the shared layer to more harnesses / agents (tracked in `.pi/task_set.json` as P4):
+Shared-layer expansion status (research findings & decisions: `docs/harness-injection-research.md`; tasks tracked in `.pi/task_set.json`):
 
-1. **Native AGENTS.md readers — just add render targets**: Codex, OpenCode, Qwen Code, Goose, Aider;
-2. **Own instruction files — filename-mapped rendering**: Claude Code (CLAUDE.md), Cline, Roo Code, Kilo Code;
-3. **Platform / framework types — investigate their instruction injection points**: DeepSeek Harness, OpenHands, SWE-agent, Antigravity CLI, Grok Build.
+1. **Done**: global render targets now cover Codex, OpenCode, Qwen Code, Goose, Aider (native AGENTS.md readers) plus Claude Code (CLAUDE.md), Cline, Roo Code, Kilo Code (own rule files) — all driven by `global_targets` in `templates/gate-policy.json` and rendered automatically by `node deploy.mjs`;
+2. **Next** (research-confirmed grade A: `~/.dsh/AGENTS.md`, `~/.agents/skills/`, `~/.gemini/GEMINI.md`, `~/.grok/rules/`): DeepSeek Harness, OpenHands, Antigravity, Grok Build;
+3. **Deferred**: SWE-agent (grade C, no file-level injection point — YAML template embedding only); Aider's `~/.aider.conf.yml` read wiring waits for an actual install.
 
 ### License
 
