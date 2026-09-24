@@ -2,10 +2,10 @@
   "任务集": {
     "名称": "cross-agent-shared",
     "创建时间": "2026-09-15 13:09",
-    "说明": "项目任务集（session-panel 自动加载）。约定：删除已完成项、只保留未完成项、按 P0>P1>P2>P3>P4 排序；每项回写 maintainability_check 字段。共用层接入已完结：原 ROAD-01～14（①②类 9 工具 + ③类 5 平台调研）与后续 ROAD-15～19（4 平台接线 + Claude Code 项目级指针）均已于 2026-09-16 落地，全局渲染目标 15 处，调研结论见 docs/harness-injection-research.md。剩余仅下列两项非自动项。",
+    "说明": "项目任务集（session-panel 自动加载）。约定：删除已完成项、只保留未完成项、按 P0>P1>P2>P3>P4 排序；每项回写 maintainability_check 字段。共用层接入已完结：ROAD-01～19 已于 2026-09-16 落地，全局渲染目标 15 处，调研基线 docs/harness-injection-research.md（2026-09-16）。2026-09-24 三通道复查（窗口 09-10→09-24）：变动项＝Claude Code 2.1.277（09-18）新增 AGENTS.md 原生回退支持、Roo Code 官方仓库 2026-05-15 归档由分叉 Zoo Code 接续（路径约定不变）、Grok Build 09-19 嵌套 AGENTS.md + 09-22 内置引导改走 user rules 通道、Antigravity 2.11.0 @path 内联（二手待证）、Cline v4.1.20 全端规则路径统一；结论：15 个渲染目标零变更、gate-policy 无需修改。2026-09-24 深夜无人值守已完成：ROAD-22（调研文档补记+就地更正）、ROAD-23（双语 README 表格同步）、ROAD-24（幂等核验：源/仓 gate-policy 内容零分叉——工作区 CRLF 为 core.autocrlf 检出产物；--sync-global 复跑两遍均 15/15「无变化」；gate-policy 零修改结论成立）、ROAD-25（计划外，Mimosa pre-commit 拦截触发：weather-map.ts 31/47/237 三处 shell 字符串拼接改为 execFile/execFileSync 参数数组形式——先改源 ~/.pi/agent 再同步镜像，两者规范化 diff 一致；验证＝node --experimental-strip-types 语法检查通过、cmd start 打开临时页成功、powershell 取凭据新旧形式 A/B 等价（本机未配 key，均 exitCode=1 走 catch-null 正常路径）；遗留 gap＝无 tsc 全量类型检查、已配 key 的真实高德路径未实测，Pi 下次重启加载新版扩展）。剩余非自动项：ROAD-20 维持待人工（Aider 仍无自动加载，issue #4363 仍 open）；ROAD-21 维持暂缓（SWE-agent main 分支 09-10 后零提交、AGENTS.md 相关 issue 0 命中、全年无 release）。",
     "任务列表": [
-      { "id": "ROAD-20", "标题": "【P4·待人工】Aider 配置接线：安装 Aider 后在 ~/.aider.conf.yml 增 read: ~/.aider/CONVENTIONS.md 的绝对路径（渲染目标文件已就位；依赖工具安装+人工确认，Aider 不读项目 AGENTS.md）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待人工" },
-      { "id": "ROAD-21", "标题": "【P4·暂缓】SWE-agent：C 级无文件级注入点，仅能内嵌 YAML system_template + --config；暂不实施，跟踪上游是否新增指令文件机制", "路径": "D:\\projects\\cross-agent-shared", "状态": "暂缓" }
+      { "id": "ROAD-20", "标题": "【P4·待人工】Aider 配置接线：安装 Aider 后在 ~/.aider.conf.yml 增 read: ~/.aider/CONVENTIONS.md 的绝对路径（渲染目标文件已就位；依赖工具安装+人工确认，Aider 不读项目 AGENTS.md。2026-09-24 复核：Aider 仍无自动加载机制，feature request #4363 仍 open，维持待人工）", "路径": "D:\\projects\\cross-agent-shared", "状态": "待人工" },
+      { "id": "ROAD-21", "标题": "【P4·暂缓】SWE-agent：C 级无文件级注入点，仅能内嵌 YAML system_template + --config；暂不实施，跟踪上游是否新增指令文件机制（2026-09-24 复核：v1.1.0 后无 release、main 09-10 后零提交、AGENTS.md 相关 issue 0 命中，维持暂缓；下次复查点设在其下一 minor release 或相关 RFC 出现时）", "路径": "D:\\projects\\cross-agent-shared", "状态": "暂缓" }
     ]
   }
 }

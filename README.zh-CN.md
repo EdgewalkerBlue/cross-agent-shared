@@ -22,13 +22,14 @@
 | **ZCode** | 直接渲染：`node bin/project-init.mjs --sync-global` 把 `templates/global-agents-shared.md` 渲染进 `~/.zcode/AGENTS.md` 的 `pi:shared` 共享区块（各文件手工区保留，见 `templates/gate-policy.json` 的 `global_targets`） |
 | **WorkBuddy** | Skill 镜像：无全局指令文件通道（人格文件不承载门禁，gate-policy 中 `workbuddy.path = null`），走 user-level skill `pi-agent-shared-tools`——`skills/pi-shared/SKILL.md` 部署到 `~/.workbuddy/skills/pi-shared/`，内容为守则镜像 + 转发 Pi 统一实现（pi-subagent / pi-project） |
 | **项目级（全部 Agent）** | `bin/project-init.mjs "<项目>"` 生成项目契约 `AGENTS.md` + `.pi/task_set.json`；存在 WorkBuddy 时由生成器同步写入等价 `CODEBUDDY.md` |
-| **Claude Code** | 不读项目 AGENTS.md——全局走 `~/.claude/CLAUDE.md` 标记块（刻意不用 `~/.claude/rules/`，Grok Build 兼容加载该目录会双重加载）；项目级由 project-init（`claude_sync` 开关）自动生成一行 `@AGENTS.md` 导入指针的 CLAUDE.md（已有 CLAUDE.md 一律不动），CLAUDE.md 已纳入禁传清单 |
+| **Claude Code** | 全局走 `~/.claude/CLAUDE.md` 标记块（刻意不用 `~/.claude/rules/`，Grok Build 兼容加载该目录会双重加载）。2.1.277（2026-09-18）起项目无 CLAUDE.md 时原生回退读 AGENTS.md（纯回退不合并不二选；user 级 CLAUDE.md 始终加载；/config 可改模式）——project-init 的一行 `@AGENTS.md` 导入指针 CLAUDE.md（`claude_sync` 开关，已有 CLAUDE.md 一律不动）**保留**：兼容旧版本、免用户配置、不受 /config 模式影响；CLAUDE.md 已纳入禁传清单 |
 | **Aider** | 不自动加载任何文件——渲染到 `~/.aider/CONVENTIONS.md` 后仍需在 `~/.aider.conf.yml` 写 `read: <本文件绝对路径>` 才生效（待实际安装后接线） |
 | **Qwen Code** | 渲染到 `~/.qwen/AGENTS.md`——QWEN.md 与 AGENTS.md 均自动加载，选 AGENTS.md 把 QWEN.md 留给用户个人记忆 |
 | **OpenHands** | 渲染到 `~/.agents/skills/pi-shared.md`——无触发器的纯 .md 全文常载；勿用 `~/.openhands/skills`（会覆盖公共 skills 缓存） |
 | **Grok Build** | 渲染到 `~/.grok/rules/pi-shared.md`——勿放进其兼容加载的 `~/.claude/rules` / `~/.cursor/rules` |
 | **Goose** | Windows 全局落点 `%APPDATA%\Block\goose\config\AGENTS.md`（不在 home 目录） |
 | **Cline** | 全局规则为 `~/Documents/Cline/Rules/` 目录型；Documents 被重定向的机器需把 path 改为真实 Documents 下的路径 |
+| **Roo Code** | 官方仓库 2026-05-15 归档，社区分叉 Zoo Code 接续且沿用 `~/.roo/rules/` 路径与机制——渲染目标不变，消费方自动切换 |
 | **收敛位取舍** | 跨工具收敛点 `~/.agents/AGENTS.md` 故意不用——Goose/Cline 等多工具同时消费，单点渲染会造成上下文重复 |
 
 ## 仓库结构

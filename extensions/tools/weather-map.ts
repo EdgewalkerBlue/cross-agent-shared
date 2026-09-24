@@ -12,7 +12,7 @@
  * 无 key 时 weather 可用（Open-Meteo 免 key），高德三工具返回申请指引。
  */
 
-import { exec, execSync } from "node:child_process";
+import { execFile, execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import * as fs from "node:fs";
 import * as os from "node:os";
@@ -28,8 +28,9 @@ let amapKeyCache: string | null | undefined;
 function getAmapKey(): string | null {
 	if (amapKeyCache !== undefined) return amapKeyCache;
 	try {
-		const out = execSync(
-			`powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "${PI_CRED_PS1}" get pi-amap`,
+		const out = execFileSync(
+			"powershell",
+			["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", PI_CRED_PS1, "get", "pi-amap"],
 			{ encoding: "utf8", timeout: 15_000 },
 		).trim();
 		amapKeyCache = /^[0-9a-f]{32}$/i.test(out) ? out : null;
@@ -44,8 +45,9 @@ let amapSecretCache: string | null | undefined;
 function getAmapSecret(): string | null {
 	if (amapSecretCache !== undefined) return amapSecretCache;
 	try {
-		const out = execSync(
-			`powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File "${PI_CRED_PS1}" get pi-amap-secret`,
+		const out = execFileSync(
+			"powershell",
+			["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-File", PI_CRED_PS1, "get", "pi-amap-secret"],
 			{ encoding: "utf8", timeout: 15_000 },
 		).trim();
 		amapSecretCache = /^[0-9a-f]{32}$/i.test(out) ? out : null;
@@ -233,11 +235,10 @@ function saveAndOpenMap(cwd: string, html: string): string {
 	const ts = new Date().toISOString().replace(/[-:T]/g, "").slice(0, 14);
 	const file = path.join(dir, `route-${ts}.html`);
 	fs.writeFileSync(file, html, "utf8");
-	try {
-		exec(`start "" ${JSON.stringify(file)}`);
-	} catch {
+	// 参数数组不经 shell：含空格路径由 node 自动加引号，cmd /s 保证 start 解析正确
+	execFile("cmd.exe", ["/d", "/s", "/c", "start", "", file], () => {
 		/* 打开失败不影响结果返回 */
-	}
+	});
 	return file;
 }
 
