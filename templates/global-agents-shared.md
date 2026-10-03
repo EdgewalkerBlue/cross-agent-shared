@@ -150,6 +150,39 @@ discovery → reuse_decision → implementation → maintainability_gate → ver
 
 ---
 
+# 新建项目守则（立项问答 · 结构 · 边界，全局强制）
+
+> 触发时机：任何 Agent 首次新建项目（或从零生成新应用）时，在写第一行项目代码之前执行本守则。
+> 无人值守模式下选型未定 → 标记「待人工」，不得替用户默认拍板。
+
+## 立项必问（缺一不得开工）
+1. **代码语言选型**：确认主语言与运行时；用户未指定时给出 ≤3 个候选 + 一句理由，由用户拍板，禁止自行默认。
+2. **UI 选型**：确认 UI 形态与技术（Web / TUI / 桌面 GUI / 无界面）；无界面项目须在项目 AGENTS.md 显式记录「无 UI」。
+3. **功能解耦确认**：按功能列模块清单（每个模块一句话职责），用户确认后才动工。
+
+## 立项选问（视功能进度与复杂度，适时提问）
+- **引导页 / 设置页 / 帮助页**：主流程成型、复杂度上来后一次性问清三项是否需要；不作为开工前置条件。
+
+## 结构强制
+- **启动快捷链接**：项目根必须提供唯一一键启动入口（如 `启动.cmd` / `start.sh`），双击或单命令即可运行。
+- **目录深度最少化**：源码目录 ≤3 层；文件数量不足以证明分组价值时禁止建子目录，先平铺后分组。
+- **单一职责边界**：一句话项目定位写进项目 AGENTS.md 首行；超出定位的需求只登记任务集待办，不直接实现，必要时建议另立项目。
+
+## 简化守则
+- 依赖最少化：优先标准库与既有依赖；新增第三方依赖须说明不可替代理由。
+- YAGNI / MVP 先行：不做"以后可能用到"的预留功能；先跑通主流程，再按任务集迭代。
+- 配置单入口：配置集中一处读写，禁止多份平行配置。
+
+## 边界清晰化守则
+- 立项前查重：先检索既有项目是否已有同类功能，能复用/扩展就不新建（对应 MCG-002）。
+- 不跨项目引用：禁止 import/调用其他项目代码；确需共享先提议独立包，或复制并登记 intentional_duplication。
+- 依赖单向：模块依赖方向清晰、无循环依赖；UI / 逻辑 / 数据三层不得互相穿插。
+
+## 项目级落地
+- 选型结果填入项目 AGENTS.md 的「立项选型」区（生成器骨架自带，缺失时先跑 `project-init.mjs --ensure`）。
+
+---
+
 # SubAgent 共用（跨 Agent，唯一实现）
 
 - **唯一实现**：Pi 的子 Agent 定义（`~/.pi/agent/agents/*.md` + 项目 `.pi/agents/*.md`）。
@@ -199,6 +232,24 @@ pi-subagent --list --json    # JSON 里带 cli.version / cli.mtime
 
 派发结果的 JSON 也包含 `cli` 字段；记录它再做前后对比。测试期间若 CLI 版本变了，该组对比作废。
 
+## 并发与容量（观测 → 决策，勿拍脑袋调）
+
+**上限可配置**（`extensions/tools/subagent/config.json`，改完即生效，无需 /reload）：
+`maxParallelTasks`（单次派发最大任务数，默认 8）、`maxConcurrency`（同时运行的最大子 Agent 数，当前 **6**）。
+
+**先观测再决策**——数据来自 `runs-core` 的 `extensions/.pi/subagent-runs/metrics.json`（`/runs` 命令可直接看）：
+`peakConcurrency`（并发峰值）｜`started/done/failed`｜`byErrorKind`（`quota`=429/1310/周月限、`server`=5xx、`timeout`、`guard`）｜`minFreeMemGB`（观测期内最低可用内存）。建议连续观察 1-2 个工作日再动手。
+
+| 观测结果 | 结论 |
+|---|---|
+| `byErrorKind.quota` 占比高（≥30%） | **不要提并发**：瓶颈是 provider 配额，提并发只会换来更多 429/1310（应改走链回退或推迟到闲时） |
+| `minFreeMemGB` < 0.5GB | **不要提**：内存先于配额爆（每个子 Agent 进程瞬时≈90MB；主会话常驻≈260MB） |
+| `peakConcurrency` 长期贴上限 + 内存有余 + quota 占比低 | **可以提 1-2 级**（如 6→8），提后再观察一个周期 |
+| 启动开销占总耗时 >15% | 才值得考虑**方案 B（RPC 进程池）**：起 N 个常驻 `pi --mode rpc` 进程，用 `new_session` 复用消除 0.9s/次启动 |
+| 想上**方案 C（SDK 进程内会话池）** | 必须先 PoC 实测「每会话内存」；若 ≥90MB 则本机（可用内存常仅 1GB 量级）无意义 |
+
+实测基线（2026-09-26，参者参考）：pi 启动 **791ms**（`-ne`）/ **875ms**（含全部扩展）；子 Agent 子进程瞬时 **≈90MB**；主会话常驻 **≈260MB**。
+
 ## 共用自检（怎么测，任何 Agent 可照做）
 
 **三步自检**（把下面命令交给 ZCode / WorkBuddy 执行；它们 PATH 与 Pi 不同，**一律用绝对路径**）：
@@ -243,15 +294,22 @@ pi-subagent --list --json    # JSON 里带 cli.version / cli.mtime
 - 配置：`~/.pi/agent/extensions/tools/subagent/rotation.json` → `agents.<name> = [模型1, 模型2, …]`（从高到低）。
 - 行为：主模型 429/配额/服务异常 → **按链依次自动重试**，直到成功或用尽；链的解析在 `subagent/models-core.mjs`，Pi 的 subagent 扩展与 `pi-subagent` CLI **共用同一实现**。
 - 查看：`pi-subagent --list`（列出每个 Agent 的链）或 `/rotation`。
+- **链序注意**：`--list` 显示的是 **offpeak 重排后**的实际执行序（闲时 deepseek 前置省钱、峰时 glm 前置避高价，实现在 `extensions/automation/offpeak-core.mjs`），**≠ rotation.json 原序**——勿据此误判链配置被改。
 - 当前链：thinker `glm-5.3 → glm-5.3-flash → deepseek-flash`；coder `glm-5.3-flash → glm-5.3 → deepseek-flash`；reasoner `glm-5.3 → glm-5.3-flash → deepseek-flash`；navigator `glm-5.3-flash → deepseek-flash`。
 
 ## 主会话（启动模型 + 故障回退）
 
 - 启动模型：`~/.pi/agent/settings.json` 的 `defaultProvider` / `defaultModel`（当前 `zai-coding-cn` / `glm-5.3-flash`）。
 - 自动回退：扩展 `automation/model-fallback.ts`，配置 `automation/model-fallback.json`：
-  - `after_provider_response` 命中 `triggerStatuses`（429/5xx）→ 按 `chain` 切到下一个模型；
-  - `session_start` 冷却结束后回到 `primary`（**仅当上次是本扩展切走的状态**，绝不覆盖 `--model` 显式选择）；
+  - **触发（双路，缺一不可）**：
+    1. `turn_end`：失败消息 `stopReason=error` 且 `errorMessage` 命中 `429 / 1310 / quota / rate.?limit / 5xx` → **这是实际生效的一路**；
+    2. `after_provider_response`：状态命中 `triggerStatuses`（429/5xx）→ 备用（**实测在真实 429 上常不触发，不可单依赖**）。
+  - **切谁（`resolveFallback`）**：当前模型在 `chain` 中 → 取链中下一个；**不在链中但与 `primary` 同 provider**（如会话跑在 `glm-5.3`、链里写的是 `glm-5.3-flash`）→ 切到链中首个**不同 provider** 的模型（优先取最后一个＝最终兜底）；不同 provider 的第三方模型 → 不接管。
+  - **防抖**：仅对“同一目标模型” 5s 内重复切换去重；**不阻断沿链继续前进**（否则 3 环链会卡在第 2 环）。
+  - `session_start` 冷却结束后回 `primary`（**仅当上次是本扩展切走的状态**，绝不覆盖 `--model` 显式选择）。
   - 命令：`/model-fallback` 查看，`/model-fallback next` 手动切下一个，`/model-fallback reset` 回主模型。
+  - 排障：`PI_MODEL_FALLBACK_DEBUG=1` 启动 → `~/.pi/agent/extensions/.pi/model-fallback-debug.log`（记录每次判定的 status/current/chain/next/切换结果）。
+- **与子 Agent 路由的边界**：子 Agent 子进程由 subagent 扩展 / `bin/subagent-cli.mjs` 注入 `PI_MODEL_FALLBACK_DISABLE=1`，**主会话回退在这些子进程里禁用**——子 Agent 的模型路由只归它自己的模型链（见上节），避免两套路由互相覆盖。
 
 ## 避坑（血泪教训）
 
@@ -259,15 +317,18 @@ pi-subagent --list --json    # JSON 里带 cli.version / cli.mtime
 - **`aliases`**：rotation.json 支持简写映射（`deepseek-flash` → `deepseek/deepseek-flash`），避免各处写全 id。
 - **别在 session_start 无条件切模型**：会抹掉调用方（subagent `--model`、CLI `--model`）的显式选择；回退扩展必须基于状态判断。
 - **报告要分“请求模型”与“实际模型”**：子 Agent 结果里 `requestedModel` 与 `model`/`provider` 分开，否则会把“跑在另一个模型上”误判成“请求成功”。
+- **不要只依赖 `after_provider_response` 做故障回退**：它在真实 429 上实测不触发（三次 429 全程无事件），必须同时从 `turn_end` 的失败消息里识别（429/1310/quota/5xx）。
+- **回退判定不要要求“当前模型必须在链里”**：会话实际跑的模型常是链中模型的变体（如 `glm-5.3` vs `glm-5.3-flash`），旧实现在这种情形下直接放弃回退。
 
 # 上传卫生（GitHub 建仓 / 推送 / 合并，强制）
 
 - **禁传清单**：`.pi/`（**除 `task_set.json` 外**）、`.zcode/`、`AGENTS.md`、`CODEBUDDY.md`（本地契约 + 私有数据，不入库、不推送）。
 - **例外**：`.pi/task_set.json` 随项目分发（与项目绑定）**必须上传**；因此忽略规则写成 `.pi/*` + `!.pi/task_set.json`（**不能**写 `.pi/`，父目录被排除后无法再包含子文件）。
-- **三重保障**（由 `project-init.mjs` 自动安装，勿手工拆除）：
-  1. 全局 `core.excludesFile` → `~/.pi/agent/templates/git-exclude-global.txt`（对所有仓库生效）；
-  2. 各仓库 `<git-dir>/info/exclude` 同名区块（本地生效、不入库）；
-  3. 全局 `pre-commit` 拦截暂存区（防 `git add -f` 绕过），`pre-push` 拦截已被跟踪的禁传文件（防推送）。
+- **三重保障**（由 `bin/project-init.mjs` 在 `--ensure`/`--check` 时**自动检测并安装/自愈**，勿手工拆除）：
+  1. 全局 `core.hooksPath` → `~/.pi/agent/git-hooks`（`pre-commit` 拦截暂存区，防 `git add -f` 绕过；`pre-push` 拦截已被跟踪的禁传文件）；
+  2. 全局 `core.excludesFile` → `~/.pi/agent/templates/git-exclude-global.txt`（对所有仓库生效）；
+  3. 各仓库 `<git-dir>/info/exclude` 同名区块（本地生效、不入库）。
+  **缺文件（hooks 目录 / 钩子 / 忽略模板）时硬报错（strict，退出码 1），不得静默跳过**；配置被清空/换机器后，下一次 `--ensure` 会自动重新安装。
 - **自检与修复**（任何 Agent 可执行；`pi-project` 等价于 `node ~/.pi/agent/bin/project-init.mjs`）：
   ```bash
   ~/.pi/agent/bin/pi-project "<项目>" --guard-staged        # 暂存区有禁传文件 → exit 1
@@ -275,5 +336,7 @@ pi-subagent --list --json    # JSON 里带 cli.version / cli.mtime
   ~/.pi/agent/bin/pi-project "<项目>" --untrack-forbidden   # 已跟踪的禁传文件移出索引（本地文件保留）
   ```
 - **建仓 / 首次推送 / 合并到主分支前，必须先跑一次 `--untrack-forbidden`**：仅靠 ignore 无法阻止已被跟踪的文件上传。
+- **分支策略（新项目默认）**：建仓后一律建 `dev` 分支并设为 GitHub 默认分支；日常开发只在 `dev`，`main` 保持稳定版。合并回 `main`、发版（release/tag）属对外动作，**先询问用户确认**，不得自行执行。
+- **建仓默认动作**：① **仓库简述**：默认用一句话写清项目定位（已有时跳过，不覆盖）；② **README 中英双语**：英文为主体，文件开头放语言跳转链接（如 `[English](#readme) | [简体中文](#简体中文)`），中文内容置于英文之后。
 
 <!-- pi:shared:end -->
