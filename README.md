@@ -40,6 +40,8 @@ bin/                       # subagent-cli.mjs(+wrappers), project-init.mjs(+wrap
 templates/                 # global-agents-shared.md (shared template source), gate-policy.json, etc.
 extensions/tools/          # Pi extension suite: subagent/(agents-core/models-core/rotation/config) + weather-map
 skills/pi-shared/SKILL.md  # WorkBuddy channel
+skills/dco-*/SKILL.md      # DCO orchestration skills (deployed to ~/.agents/skills/, on-demand)
+docs/dco/                  # DCO protocol docs: AGENTS.md / architecture / task_set.json
 deploy.mjs                 # one-shot deployer
 .pi/task_set.json          # project task set (incl. roadmap)
 ```
@@ -48,7 +50,7 @@ deploy.mjs                 # one-shot deployer
 
 ```bash
 git clone https://github.com/EdgewalkerBlue/cross-agent-shared.git && cd cross-agent-shared
-node deploy.mjs            # install into ~/.pi/agent and ~/.workbuddy/skills, then auto sync-global
+node deploy.mjs            # install into ~/.pi/agent, ~/.workbuddy/skills and ~/.agents/skills (DCO), then auto sync-global
 node deploy.mjs --dry-run  # list actions only
 ```
 

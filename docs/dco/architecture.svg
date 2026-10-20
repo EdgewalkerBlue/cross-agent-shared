@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="860" viewBox="0 0 1200 860" font-family="Noto Sans CJK SC, Source Han Sans SC, Microsoft YaHei, sans-serif">
+  <defs>
+    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b949e"/>
+    </marker>
+    <marker id="arwd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#bc8cff"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="860" fill="#0d1117"/>
+  <text x="48" y="46" fill="#e6edf3" font-size="24" font-weight="700">DCO 分布式认知编排架构</text>
+  <text x="48" y="74" fill="#8b949e" font-size="14">Distributed Cognition Orchestrator · 端侧前置路由 / 黑板编排 / 子代理隔离 / 高压收敛</text>
+
+  <!-- Layer A -->
+  <rect x="48" y="96" width="1104" height="112" rx="12" fill="#2ea043" fill-opacity="0.07" stroke="#2ea043" stroke-opacity="0.55" stroke-dasharray="6 4"/>
+  <text x="72" y="124" fill="#3fb950" font-size="15" font-weight="700">端侧前置路由　只做确定性提炼</text>
+  <rect x="80" y="134" width="490" height="58" rx="8" fill="#161b22" stroke="#30363d"/>
+  <text x="104" y="159" fill="#e6edf3" font-size="15" font-weight="600">长链实体解析小模型</text>
+  <text x="104" y="180" fill="#8b949e" font-size="12.5">解引用指代 · 抽取因果依赖 · 输出确定性上下文</text>
+  <rect x="630" y="134" width="490" height="58" rx="8" fill="#161b22" stroke="#30363d"/>
+  <text x="654" y="159" fill="#e6edf3" font-size="15" font-weight="600">微型 LoRA 中继</text>
+  <text x="654" y="180" fill="#8b949e" font-size="12.5">冻结基座 · 早期单层注入 · 放大注意力信号</text>
+
+  <line x1="600" y1="208" x2="600" y2="232" stroke="#8b949e" stroke-width="1.6" marker-end="url(#arw)"/>
+
+  <!-- Layer B -->
+  <rect x="48" y="236" width="1104" height="140" rx="12" fill="#58a6ff" fill-opacity="0.07" stroke="#58a6ff" stroke-opacity="0.55" stroke-dasharray="6 4"/>
+  <text x="72" y="264" fill="#79c0ff" font-size="15" font-weight="700">编排层　复杂度 O(n)，事实唯一</text>
+  <rect x="80" y="276" width="310" height="76" rx="8" fill="#161b22" stroke="#30363d"/>
+  <text x="102" y="303" fill="#e6edf3" font-size="15" font-weight="600">黑板</text>
+  <text x="102" y="323" fill="#8b949e" font-size="12">全局单一事实来源</text>
+  <text x="102" y="341" fill="#8b949e" font-size="12">可追溯 · 防上下文污染</text>
+  <rect x="460" y="276" width="310" height="76" rx="8" fill="#161b22" stroke="#30363d"/>
+  <text x="482" y="303" fill="#e6edf3" font-size="15" font-weight="600">事件总线</text>
+  <text x="482" y="323" fill="#8b949e" font-size="12">标签 + 状态增量</text>
+  <text x="482" y="341" fill="#8b949e" font-size="12">低延迟 · 高保真</text>
+  <rect x="840" y="276" width="310" height="76" rx="8" fill="#161b22" stroke="#30363d"/>
+  <text x="862" y="303" fill="#e6edf3" font-size="15" font-weight="600">中继代理 · DCO</text>
+  <text x="862" y="323" fill="#8b949e" font-size="12">路由 / 摘要 / 裁决</text>
+  <text x="862" y="341" fill="#8b949e" font-size="12">禁子代理点对点直连</text>
+
+  <line x1="600" y1="376" x2="600" y2="400" stroke="#8b949e" stroke-width="1.6" marker-end="url(#arw)"/>
+
+  <!-- Layer C -->
+  <rect x="48" y="404" width="1104" height="132" rx="12" fill="#d29922" fill-opacity="0.07" stroke="#d29922" stroke-opacity="0.55" stroke-dasharray="6 4"/>
+  <text x="72" y="432" fill="#e3b341" font-size="15" font-weight="700">子代理群　互不建连，幻觉隔离在单节点</text>
+  <rect x="80" y="444" width="240" height="72" rx="8" fill="#161b22" stroke="#30363d"/>
+  <text x="112" y="474" fill="#e6edf3" font-size="14.5" font-weight="600">子代理 A</text>
+  <text x="112" y="496" fill="#8b949e" font-size="12">只读黑板 + 写增量</text>
+  <rect x="355" y="444" width="240" height="72" rx="8" fill="#161b22" stroke="#30363d"/>
+  <text x="387" y="474" fill="#e6edf3" font-size="14.5" font-weight="600">子代理 B</text>
+  <text x="387" y="496" fill="#8b949e" font-size="12">只读黑板 + 写增量</text>
+  <rect x="630" y="444" width="240" height="72" rx="8" fill="#161b22" stroke="#30363d"/>
+  <text x="662" y="474" fill="#e6edf3" font-size="14.5" font-weight="600">子代理 C</text>
+  <text x="662" y="496" fill="#8b949e" font-size="12">只读黑板 + 写增量</text>
+  <rect x="905" y="444" width="240" height="72" rx="8" fill="#161b22" stroke="#30363d"/>
+  <text x="937" y="474" fill="#e6edf3" font-size="14.5" font-weight="600">子代理 D</text>
+  <text x="937" y="496" fill="#8b949e" font-size="12">只读黑板 + 写增量</text>
+
+  <line x1="600" y1="536" x2="600" y2="560" stroke="#8b949e" stroke-width="1.6" marker-end="url(#arw)"/>
+
+  <!-- Layer D -->
+  <rect x="48" y="564" width="1104" height="132" rx="12" fill="#bc8cff" fill-opacity="0.07" stroke="#bc8cff" stroke-opacity="0.55" stroke-dasharray="6 4"/>
+  <text x="72" y="592" fill="#d2a8ff" font-size="15" font-weight="700">云端深度推理　零容错审计环境 · 三阶段闭环</text>
+  <rect x="80" y="604" width="240" height="72" rx="8" fill="#161b22" stroke="#30363d"/>
+  <text x="104" y="634" fill="#e6edf3" font-size="14.5" font-weight="600">① 依赖图谱展开</text>
+  <text x="104" y="656" fill="#8b949e" font-size="12">零跳步 · 拒省略号</text>
+  <rect x="355" y="604" width="240" height="72" rx="8" fill="#161b22" stroke="#30363d"/>
+  <text x="379" y="634" fill="#e6edf3" font-size="14.5" font-weight="600">② 逐步显式追踪</text>
+  <text x="379" y="656" fill="#8b949e" font-size="12">中间状态全部可见</text>
+  <rect x="630" y="604" width="240" height="72" rx="8" fill="#161b22" stroke="#30363d"/>
+  <text x="654" y="634" fill="#e6edf3" font-size="14.5" font-weight="600">③ 中继信号自检</text>
+  <text x="654" y="656" fill="#8b949e" font-size="12">补断层 · 消模糊代词</text>
+  <rect x="905" y="604" width="240" height="72" rx="8" fill="#161b22" stroke="#30363d"/>
+  <text x="929" y="634" fill="#e6edf3" font-size="14.5" font-weight="600">④ 收敛核验输出</text>
+  <text x="929" y="656" fill="#8b949e" font-size="12">未自洽不得交卷</text>
+
+  <path d="M 1148 640 L 1180 640 L 1180 314 L 1156 314" fill="none" stroke="#bc8cff" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#arwd)"/>
+  <text x="1055" y="728" fill="#bc8cff" font-size="12" text-anchor="end">链路断层 → 打回中继层补全</text>
+
+  <line x1="600" y1="696" x2="600" y2="734" stroke="#8b949e" stroke-width="1.6" marker-end="url(#arw)"/>
+
+  <rect x="420" y="738" width="360" height="60" rx="10" fill="#39c5bb" fill-opacity="0.10" stroke="#39c5bb"/>
+  <text x="600" y="763" fill="#e6edf3" font-size="15" font-weight="600" text-anchor="middle">结论 / 交付物</text>
+  <text x="600" y="784" fill="#8b949e" font-size="12" text-anchor="middle">结果与新增事实回写黑板</text>
+</svg>

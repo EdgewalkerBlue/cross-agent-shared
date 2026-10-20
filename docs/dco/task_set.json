@@ -1,0 +1,193 @@
+{
+  "schema": "dco-task-set",
+  "name": "DCO 分布式认知编排任务集",
+  "version": "1.0.0",
+  "updated_at": "2026-10-10",
+  "source": "群内 DeepSeek Bot 讨论整理：长程隐式推理过早停机 / 高约束审计指令 / 多智能体通信拓扑",
+  "description": "本文件只定义任务、触发条件、阶段流程、交付物与验收判据。模型选型、token 预算、供应商故障切换由独立文件承担，不在本文件重复定义。",
+  "stage_model": {
+    "order": ["expand", "relay", "selfcheck", "converge"],
+    "gate": "上一阶段未通过，不得进入下一阶段；converge 之前任何输出都必须标注为草稿",
+    "visible_intermediate_state": true
+  },
+  "hard_rules": [
+    "禁止使用省略号、占位符、TODO 或「以此类推」代替推导步骤",
+    "禁止在未完成 selfcheck 的情况下给出最终结论",
+    "禁止在无依据时补全事实；缺失即标注 MISSING 并走补全请求",
+    "子代理之间禁止点对点直连，一切状态变更经黑板与事件总线",
+    "长程状态传递使用结构化协议（标签 + 增量），自然语言仅用于人类可读摘要",
+    "高风险写操作（生产环境、外部平台发布、删除类）在任何阶段都需人工确认"
+  ],
+  "state_object": {
+    "task_id": "DCO-xx",
+    "fact_ref": "黑板条目 ID，例如 BB-0007",
+    "tag": "结构化协议头，例如 RELAY.FACT.DELTA",
+    "state_delta": "本节点新增/修正的字段，禁止整份覆盖",
+    "confidence": "0-1，低于 0.6 必须触发补全请求",
+    "evidence": "来源引用（文件路径 / 消息 ID / URL），无来源置空数组"
+  },
+  "routing": {
+    "end_side_prefilter": {
+      "applies_when": "输入含多重指代、跨文档实体、超过 5 跳的因果链",
+      "target": "本地挂载微型权重的开源小模型",
+      "output": "解引用后的确定性上下文"
+    },
+    "cloud_deep_reasoning": {
+      "applies_when": "需要多跳因果裁决、架构级判断或长代码逻辑推演",
+      "target": "主干模型，运行于零容错审计环境",
+      "compensation": "无法改动权重时，用显式思维链展开替代隐藏层中继"
+    },
+    "short_path": {
+      "applies_when": "单跳事实、闲聊、简单查询、时效性数据检索",
+      "policy": "不挂载本任务集，直接回答"
+    }
+  },
+  "tasks": [
+    {
+      "id": "DCO-01",
+      "name": "长链实体解引用与前置路由",
+      "layer": "edge",
+      "trigger": "输入存在模糊代词、跨段引用、跨文档实体或依赖未显式陈述",
+      "inputs": ["原始任务文本", "可用事实源引用"],
+      "stages": [
+        { "phase": "expand", "action": "列出全部实体、别名、指代与候选事实源", "done_when": "每个代词都能绑定到唯一实体或标注歧义" },
+        { "phase": "relay", "action": "把解引用结果写成结构化上下文，投递事件总线", "done_when": "条目含 task_id / fact_ref / tag / confidence" },
+        { "phase": "selfcheck", "action": "核对是否仍有隐含假设未声明", "done_when": "无未声明假设，或已单列为 MISSING" }
+      ],
+      "outputs": ["确定性上下文包", "歧义清单"],
+      "acceptance": ["下游无需回问原句即可独立执行", "所有 fact_ref 可回溯"],
+      "failure_policy": "歧义无法消解时提交候选列表给用户裁决，不自行择一",
+      "skills": ["dco-skill-relay-injection"]
+    },
+    {
+      "id": "DCO-02",
+      "name": "显式思维链强制展开",
+      "layer": "cloud",
+      "trigger": "多跳因果分析、长代码逻辑、数学推导、需要可审计的决策链",
+      "inputs": ["确定性上下文包"],
+      "stages": [
+        { "phase": "expand", "action": "第一轮禁止给结论，只铺设依赖图谱与推导骨架", "done_when": "图谱覆盖全部前置条件与中间结论" },
+        { "phase": "relay", "action": "逐步填充推导，每步标注依据来源", "done_when": "每步都能指出依赖的上一节点" },
+        { "phase": "selfcheck", "action": "扫描逻辑断层、模糊代词、偷懒缩写、无依据假设", "done_when": "任一问题已补全或降级为显式不确定项" },
+        { "phase": "converge", "action": "全链自洽后总结输出", "done_when": "结论可仅凭链上前提复现" }
+      ],
+      "outputs": ["完整推导链", "最终结论", "不确定项清单"],
+      "acceptance": ["不存在未经说明的跳跃", "结论与前缀链一致，无中途换定义"],
+      "failure_policy": "自检不通过时回到 relay，最多重试 2 次，之后降级为「部分结论 + 阻塞点」",
+      "skills": ["dco-skill-explicit-chain-reasoning", "dco-skill-constraint-audit-protocol"]
+    },
+    {
+      "id": "DCO-03",
+      "name": "中继信号自检与断层补全",
+      "layer": "cloud",
+      "trigger": "推导链超过 5 跳、出现跨模块引用、或前后文定义疑似漂移",
+      "inputs": ["推导中间状态", "黑板快照"],
+      "stages": [
+        { "phase": "expand", "action": "沿链标注每个中继点：输入假设、输出承诺、精度损失点", "done_when": "每跳都写明该跳的弱化位置" },
+        { "phase": "selfcheck", "action": "对每跳做一致性比对，定位断层与信号衰减点", "done_when": "断层均定位到具体跳数" },
+        { "phase": "relay", "action": "向中继代理发补全请求，取回缺失事实后重连链路", "done_when": "补全结果已写回黑板并更新 fact_ref" }
+      ],
+      "outputs": ["中继自检报告", "补全请求与回执"],
+      "acceptance": ["断层数量归零，或每处残断都被显式标记为已知缺口"],
+      "failure_policy": "补全不可得时，明确标注该跳依赖未知信息，禁止用推测填充",
+      "skills": ["dco-skill-blackboard-orchestration"]
+    },
+    {
+      "id": "DCO-04",
+      "name": "零容错审计环境的指令装配与注入",
+      "layer": "cloud",
+      "trigger": "需要可审计、可复现的严肃产出，或长对话中约束明显漂移",
+      "inputs": ["任务目标", "硬性边界条件", "禁用项清单"],
+      "stages": [
+        { "phase": "expand", "action": "把约束拆成场景定义 / 硬性约束 / 阶段化交付三组", "done_when": "每组表述无歧义、可判定违反与否" },
+        { "phase": "relay", "action": "核心铁律置于提示词首尾，长规则按需动态注入", "done_when": "首尾各含一份完整铁律，无重复冲突" },
+        { "phase": "selfcheck", "action": "检查是否存在礼貌性冗余、语义噪音、可被绕过表述", "done_when": "约束为确定性命令式，无「尽量」「建议」类软词" }
+      ],
+      "outputs": ["约束指令集", "注入位置清单"],
+      "acceptance": ["违反任一条可被自动判定为执行失败", "无攻击性措辞，纯粹靠边界条件提高电压"],
+      "failure_policy": "约束互相冲突时停手，列出冲突对交由用户裁决",
+      "skills": ["dco-skill-constraint-audit-protocol"]
+    },
+    {
+      "id": "DCO-05",
+      "name": "黑板事实源归档与去重",
+      "layer": "orchestrator",
+      "trigger": "任一子代理产出新事实、修正旧结论或返回补全结果",
+      "inputs": ["state_delta", "evidence"],
+      "stages": [
+        { "phase": "expand", "action": "解析增量字段，定位受影响的黑板条目", "done_when": "受影响条目集合确定" },
+        { "phase": "relay", "action": "按 tag 写入增量，冲突时保留版本链而非覆盖", "done_when": "黑板可回放任一历史版本" },
+        { "phase": "selfcheck", "action": "全库一致性扫描：同一事实是否出现互斥版本", "done_when": "互斥项已标记待裁决" }
+      ],
+      "outputs": ["更新后的黑板条目", "版本链", "待裁决冲突清单"],
+      "acceptance": ["任意结论都能追到唯一权威条目", "无孤儿引用"],
+      "failure_policy": "写入失败保留原状态并告警，禁止静默丢弃",
+      "skills": ["dco-skill-blackboard-orchestration"]
+    },
+    {
+      "id": "DCO-06",
+      "name": "事件总线增量同步",
+      "layer": "orchestrator",
+      "trigger": "跨模块状态传递、子代理完成通知、依赖解锁",
+      "inputs": ["tag", "state_delta", "目标模块"],
+      "stages": [
+        { "phase": "expand", "action": "把待传状态压成最小必要增量，剔除过程性噪音", "done_when": "载荷只含下游真正需要的字段" },
+        { "phase": "relay", "action": "以标签事件投递，禁用自然语言广播", "done_when": "事件被目标模块确认消费" },
+        { "phase": "selfcheck", "action": "校验顺序性与幂等性：重放是否产生等价状态", "done_when": "重放不改变最终状态" }
+      ],
+      "outputs": ["事件序列", "消费确认记录"],
+      "acceptance": ["低延迟投递", "无状态丢失，重复投递不放大副作用"],
+      "failure_policy": "总线不可用时降级为黑板轮询，并在报告中标注降级",
+      "skills": ["dco-skill-blackboard-orchestration"]
+    },
+    {
+      "id": "DCO-07",
+      "name": "早期层中继模块注入实验",
+      "layer": "model",
+      "trigger": "本地开源模型长链成功率明显低于短链，且已排除提示词与数据问题",
+      "inputs": ["基座权重", "早期层选点候选", "长链评测集"],
+      "stages": [
+        { "phase": "expand", "action": "冻结基座全部权重，确定注入层与秩 r 的候选集合", "done_when": "候选方案与对照基线定义完毕" },
+        { "phase": "relay", "action": "逐个候选注入微型低秩适应模块并跑评测", "done_when": "每个候选都有同评测集下的多跳成功率" },
+        { "phase": "selfcheck", "action": "检查是否引入短链退化、格式漂移或遗忘", "done_when": "短链指标下降在可接受阈值内" },
+        { "phase": "converge", "action": "固化最优配置并记录消融结果", "done_when": "配置可复现，随机种子与数据版本留档" }
+      ],
+      "outputs": ["注入配置", "消融报告", "长链成功率对照表"],
+      "acceptance": ["多跳因果链条推导成功率有可重复的提升", "短链能力无显著退化"],
+      "failure_policy": "无提升则回退基座，把结论登记为「该任务不适用权重侧补偿」",
+      "skills": ["dco-skill-relay-injection"]
+    },
+    {
+      "id": "DCO-08",
+      "name": "编排层收敛裁决",
+      "layer": "orchestrator",
+      "trigger": "全部子代理回执就绪，或依赖图谱已无待解节点",
+      "inputs": ["子代理回执集合", "黑板快照", "未解缺口清单"],
+      "stages": [
+        { "phase": "expand", "action": "汇总各回执，映射到依赖图谱节点", "done_when": "每个节点有唯一归属回执" },
+        { "phase": "selfcheck", "action": "交叉核验：互斥结论、孤立证据、来源冲突", "done_when": "冲突项均有处理结论或标注为未定" },
+        { "phase": "converge", "action": "输出统一结论，附证据链与不确定性范围", "done_when": "结论可被第三方仅凭黑板复现" }
+      ],
+      "outputs": ["裁决结论", "证据链索引", "不确定性说明"],
+      "acceptance": ["无未声明缺口", "来源冲突已披露而非抹平"],
+      "failure_policy": "关键节点缺失时给「已知 + 未知」分段结论，禁止用多数投票掩盖分歧",
+      "skills": ["dco-skill-blackboard-orchestration", "dco-skill-explicit-chain-reasoning"]
+    }
+  ],
+  "anti_patterns": [
+    "第一轮直接给结论，事后补推导（倒推式解释）",
+    "子代理两两私聊共享状态，形成 O(n^2) 通信与幻觉网状扩散",
+    "用自然语言长文广播同步状态，造成冗余与版本歧义",
+    "靠攻击性词汇提高服从度，而非靠零容错边界条件",
+    "把百行规则埋在超长对话历史中部，导致约束失效",
+    "黑板允许多主写入且不保留版本链，冲突无法裁决",
+    "对确实无法补全的跳数用推测填满，掩盖信号衰减"
+  ],
+  "metrics": [
+    { "name": "long_chain_success_rate", "definition": "多跳因果任务中收敛且可复现的比例", "direction": "up" },
+    { "name": "unsupported_step_rate", "definition": "无依据推导步骤占全部步骤的比例", "direction": "down" },
+    { "name": "comm_overhead_per_task", "definition": "任务总状态传输次数 / 参与代理数", "direction": "down" },
+    { "name": "hallucination_blast_radius", "definition": "单节点错误影响到的下游节点数", "direction": "down" },
+    { "name": "fact_traceability", "definition": "结论可回溯到黑板权威条目的比例", "direction": "up" }
+  ]
+}

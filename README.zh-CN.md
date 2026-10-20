@@ -40,6 +40,8 @@ bin/                       # subagent-cli.mjs(+包装器)、project-init.mjs(+�
 templates/                 # global-agents-shared.md(共享指令模板源)、gate-policy.json 等 6 件
 extensions/tools/          # Pi 扩展套件：subagent/(agents-core/models-core/rotation/config) + weather-map
 skills/pi-shared/SKILL.md  # WorkBuddy 共用通道
+skills/dco-*/SKILL.md      # DCO 编排 Skill（部署到 ~/.agents/skills/，按需调用）
+docs/dco/                  # DCO 协议文档：AGENTS.md / architecture / task_set.json
 deploy.mjs                 # 一键部署
 .pi/task_set.json          # 项目任务集（含未来规划）
 ```
@@ -48,7 +50,7 @@ deploy.mjs                 # 一键部署
 
 ```bash
 git clone https://github.com/EdgewalkerBlue/cross-agent-shared.git && cd cross-agent-shared
-node deploy.mjs            # 部署到 ~/.pi/agent 与 ~/.workbuddy/skills，随后自动 sync-global
+node deploy.mjs            # 部署到 ~/.pi/agent、~/.workbuddy/skills 与 ~/.agents/skills（DCO），随后自动 sync-global
 node deploy.mjs --dry-run  # 仅查看将执行的动作
 ```
 
